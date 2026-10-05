@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// organização dos dados do sitema //////////////////////
+// organizacao dos dados do sistema //////////////////////
 #define MAX_FUNC 100
 #define MAX_NOTAS 52
 
@@ -15,16 +15,18 @@ typedef struct {
 Funcionario func[MAX_FUNC];
 int qtdFunc = 0;
 
-// calcula a média das notas de um funcionário
+// calcula a media das notas de um funcionario
 float calcularMedia(Funcionario *f) {
-    if (f->qtdNotas == 0) return 0;
+    int i;
     float soma = 0;
-    for (int i = 0; i < f->qtdNotas; i++)
+
+    if (f->qtdNotas == 0) return 0;
+    for (i = 0; i < f->qtdNotas; i++)
         soma += f->notas[i];
     return soma / f->qtdNotas;
 }
 
-// classifica o desempenho pela média
+// classifica o desempenho pela media
 const char *classificar(float media) {
     if (media >= 8) return "Excelente";
     if (media >= 6) return "Bom";
@@ -48,14 +50,16 @@ void cadastrarFuncionario() {
 }
 
 void listarFuncionarios() {
-    for (int i = 0; i < qtdFunc; i++)
+    int i;
+    for (i = 0; i < qtdFunc; i++)
         printf("%d - %s\n", i + 1, func[i].nome);
 }
 
-// lança a nota da sexta para um funcionário
+// lanca a nota da sexta para um funcionario
 void lancarNota() {
     int num;
     float nota;
+    Funcionario *f;
 
     if (qtdFunc == 0) {
         printf("Nenhum funcionario cadastrado.\n");
@@ -70,7 +74,7 @@ void lancarNota() {
         return;
     }
 
-    Funcionario *f = &func[num - 1];
+    f = &func[num - 1];
     if (f->qtdNotas >= MAX_NOTAS) {
         while (getchar() != '\n');
         printf("Esse funcionario ja tem as %d notas do ano!\n", MAX_NOTAS);
@@ -90,16 +94,19 @@ void lancarNota() {
     printf("Nota lancada!\n");
 }
 
-// mostra nome, quantidade de notas, média e classificação
+// mostra nome, quantidade de notas, media e classificacao
 void verInformacoes() {
+    int i;
+    float media;
+
     if (qtdFunc == 0) {
         printf("Nenhum funcionario cadastrado.\n");
         return;
     }
 
     printf("\n%-20s %-8s %-8s %s\n", "Nome", "Notas", "Media", "Desempenho");
-    for (int i = 0; i < qtdFunc; i++) {
-        float media = calcularMedia(&func[i]);
+    for (i = 0; i < qtdFunc; i++) {
+        media = calcularMedia(&func[i]);
         if (func[i].qtdNotas == 0)
             printf("%-20s %-8d %-8s %s\n", func[i].nome, 0, "-", "Sem notas");
         else
@@ -107,18 +114,20 @@ void verInformacoes() {
     }
 }
 
-// PARA DEIXAR SALVO MESMO DEPOIS DE RENICIAR A FERRAMENTA///////////
+// PARA DEIXAR SALVO MESMO DEPOIS DE REINICIAR O PROGRAMA ///////////
 void salvar() {
+    int i, j;
     FILE *f = fopen("dados.txt", "w");
+
     if (f == NULL) {
         printf("Erro ao salvar o arquivo!\n");
         return;
     }
     fprintf(f, "%d\n", qtdFunc);
-    for (int i = 0; i < qtdFunc; i++) {
+    for (i = 0; i < qtdFunc; i++) {
         fprintf(f, "%s\n", func[i].nome);
         fprintf(f, "%d", func[i].qtdNotas);
-        for (int j = 0; j < func[i].qtdNotas; j++)
+        for (j = 0; j < func[i].qtdNotas; j++)
             fprintf(f, " %.2f", func[i].notas[j]);
         fprintf(f, "\n");
     }
@@ -126,16 +135,18 @@ void salvar() {
 }
 
 void carregar() {
+    int i, j;
     FILE *f = fopen("dados.txt", "r");
-    if (f == NULL) return;          // primeira vez, não existe arquivo
+
+    if (f == NULL) return;          // primeira vez, nao existe arquivo
     if (fscanf(f, "%d\n", &qtdFunc) != 1 || qtdFunc < 0 || qtdFunc > MAX_FUNC)
         qtdFunc = 0;
-    for (int i = 0; i < qtdFunc; i++) {
+    for (i = 0; i < qtdFunc; i++) {
         fgets(func[i].nome, 50, f);
         func[i].nome[strcspn(func[i].nome, "\n")] = '\0';
         if (fscanf(f, "%d", &func[i].qtdNotas) != 1 || func[i].qtdNotas < 0 || func[i].qtdNotas > MAX_NOTAS)
             func[i].qtdNotas = 0;
-        for (int j = 0; j < func[i].qtdNotas; j++)
+        for (j = 0; j < func[i].qtdNotas; j++)
             fscanf(f, "%f", &func[i].notas[j]);
         fscanf(f, "\n");
     }
@@ -144,15 +155,15 @@ void carregar() {
 
 //  inicio do main ///////////////////////////////////
 
-int main(){
+int main() {
 
-    // Declaraçãoa de variáveis
+    // Declaracao de variaveis
     int opcao;
 
     carregar();
 
     do {
-        //Menu do sitema
+        //Menu do sistema
         printf("\n======================================\n");
         printf("1 ) Fazer cadastro de Funcionario :\n");
         printf("2 ) Ver informacoes dos funcionarios :\n");
@@ -166,8 +177,8 @@ int main(){
         //limpar o enter (e qualquer lixo) do buffer
         while (getchar() != '\n');
 
-        //estrutura de decisão
-        switch(opcao){
+        //estrutura de decisao
+        switch (opcao) {
             case 1:
                 cadastrarFuncionario();
                 salvar();
@@ -186,6 +197,10 @@ int main(){
                 printf("Opcao invalida\n");
         }
     } while (opcao != 0);
+
+#ifdef _WIN32
+    system("pause");   // evita fechar a janela do Dev-C++ de uma vez
+#endif
 
     return 0;
 }

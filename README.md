@@ -11,6 +11,8 @@ gcc sistema.c -o sistema
 ./sistema        # no Windows: .\sistema
 ```
 
+No Dev-C++: abra o `sistema.c`, aperte F11 (Compilar e Executar). O código usa só C padrão, compatível com versões antigas.
+
 Sem compilador instalado, cole o conteúdo de `sistema.c` em um compilador online, como o OnlineGDB (onlinegdb.com) ou o Replit.
 
 ## Menu
